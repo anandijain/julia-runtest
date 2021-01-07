@@ -25,7 +25,7 @@ inputs:
     required: false
   benchmark:
     description: 'Value passed to the  flag. The default value is: true'
-    default: 'true'
+    default: true
 
 runs:
   using: 'composite'
@@ -48,7 +48,8 @@ runs:
         JULIA_PKG_SERVER: ""
     - run: |
         # The Julia command that will be executed
-        julia_cmd=( julia --color=yes --check-bounds=yes --inline=${{ inputs.inline }} --depwarn=${{ inputs.depwarn }} --project=${{ inputs.project }} -e 'using Pkg; Pkg.test(coverage=${{ inputs.coverage }}); println("do we get here"); if ${{ inputs.benchmark }}; using PkgBenchmark; benchmarkpkg( ${{ inputs.project }} ); else println("Skipped benchmarking ${{ inputs.project }} ") end; println("after") ' )
+        # julia_cmd=( julia --color=yes --check-bounds=yes --inline=${{ inputs.inline }} --depwarn=${{ inputs.depwarn }} --project=${{ inputs.project }} -e 'using Pkg; Pkg.test(coverage=${{ inputs.coverage }}); println("do we get here"); if ${{ inputs.benchmark }}; Pkg.add("PkgBenchmark"); using PkgBenchmark; benchmarkpkg( ${{ inputs.project }} ); else println("Skipped benchmarking ${{ inputs.project }} ") end; println("after") ' )
+        julia_cmd=( julia --color=yes --check-bounds=yes --inline=${{ inputs.inline }} --depwarn=${{ inputs.depwarn }} --project=${{ inputs.project }} -e 'using Pkg; Pkg.test(coverage=${{ inputs.coverage }}); println("do we get here"); Pkg.add("PkgBenchmark"); using PkgBenchmark; benchmarkpkg( Pkg.project().name ); println("after") ' )
 
         # Add the prefix in front of the command if there is one
         prefix="${{ inputs.prefix }}"
