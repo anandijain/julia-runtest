@@ -23,6 +23,9 @@ inputs:
     description: 'Value inserted in front of the julia command, e.g. for running xvfb-run julia [...]'
     default: ''
     required: false
+  benchmark:
+    description: 'Value passed to the  flag. The default value is the repository root: "@.'
+    default: 'false'
 
 runs:
   using: 'composite'
@@ -45,7 +48,8 @@ runs:
         JULIA_PKG_SERVER: ""
     - run: |
         # The Julia command that will be executed
-        julia_cmd=( julia --color=yes --check-bounds=yes --inline=${{ inputs.inline }} --depwarn=${{ inputs.depwarn }} --project=${{ inputs.project }} -e 'using Pkg; Pkg.test(coverage=${{ inputs.coverage }})' )
+        julia_cmd=( julia --color=yes --check-bounds=yes --inline=${{ inputs.inline }} --depwarn=${{ inputs.depwarn }} --project=${{ inputs.project }} -e 'using Pkg; Pkg.test(coverage=${{ inputs.coverage }}); 
+        if ${{ inputs.benchmark }} using PkgBenchmark; benchmarkpkg( ${{ inputs.project }} else println("Skipped benchmarking ${{ inputs.project }}' )
 
         # Add the prefix in front of the command if there is one
         prefix="${{ inputs.prefix }}"
