@@ -49,7 +49,7 @@ runs:
     - run: |
         # The Julia command that will be executed
         # julia_cmd=( julia --color=yes --check-bounds=yes --inline=${{ inputs.inline }} --depwarn=${{ inputs.depwarn }} --project=${{ inputs.project }} -e 'using Pkg; Pkg.test(coverage=${{ inputs.coverage }}); println("do we get here"); if ${{ inputs.benchmark }}; Pkg.add("PkgBenchmark"); using PkgBenchmark; benchmarkpkg( ${{ inputs.project }} ); else println("Skipped benchmarking ${{ inputs.project }} ") end; println("after") ' )
-        julia_cmd=( julia --color=yes --check-bounds=yes --inline=${{ inputs.inline }} --depwarn=${{ inputs.depwarn }} --project=${{ inputs.project }} -e 'using Pkg; Pkg.test(coverage=${{ inputs.coverage }}); println("do we get here"); Pkg.add(["BenchmarkTools", "PkgBenchmark"]); using PkgBenchmark; benchmarkpkg( Pkg.project().name ); println("after") ' )
+        julia_cmd=( julia --color=yes --check-bounds=yes --inline=${{ inputs.inline }} --depwarn=${{ inputs.depwarn }} --project=${{ inputs.project }} -e 'using Pkg; Pkg.test(coverage=${{ inputs.coverage }}); println("do we get here"); Pkg.add(["BenchmarkTools", "PkgBenchmark"]); using PkgBenchmark; bench = benchmarkpkg( Pkg.project().name ); @show bench; ' )
 
         # Add the prefix in front of the command if there is one
         prefix="${{ inputs.prefix }}"
